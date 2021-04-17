@@ -28,3 +28,5 @@ class Vector {
     } else throw new Error(ERROR.DIFF_LENGTH);
   }
 }
+
+module.exports = Vector;
