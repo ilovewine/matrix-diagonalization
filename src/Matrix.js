@@ -36,20 +36,6 @@ class Matrix {
     if (!this.elements.every(row => row.length === this.dimensions[1])) throw new Error(ERROR.DIFF_LENGTH);
   }
 
-  add(matrix) {
-    if (this.dimensions[0] === matrix.dimensions[0] && this.dimensions[1] === matrix.dimensions[1]) {
-      const result = [];
-      for (let i = 0; i < this.dimensions[0]; ++i) {
-        let row = [];
-        for (let j = 0; j < this.dimensions[1]; ++j) {
-          row.push(this.elements[i][j] + matrix.elements[i][j]);
-        }
-        result.push(row);
-      }
-      return new Matrix(result);
-    } else throw new Error(ERROR.INCOMPATIBLE);
-  }
-
   multiply(matrix) {
     if (this.dimensions[1] === matrix.dimensions[0]) {
       const result = [];
@@ -78,14 +64,29 @@ class Matrix {
 }
 
 class SquareMatrix extends Matrix {
-  constructor(elements) {
+  constructor (elements) {
     super(elements);
     this.testSquareDimensions();
     this.dimension = this.dimensions[0];
   }
 
-  testSquareDimensions() {
+  testSquareDimensions () {
     if (this.dimensions[0] !== this.dimensions[1]) throw new Error(ERROR.NOT_SQUARE);
+  }
+
+  indexesMax () {
+    let max = 0;
+    let indexes = null;
+    for (let i = 0; i < this.dimension; ++i) {
+      for (let j = i + 1; j < this.dimension; ++j) {
+        if (Math.abs(this.elements[i][j]) > max) {
+          max = Math.abs(this.elements[i][j]);
+          indexes = [i, j];
+        }
+      }
+    }
+
+    return indexes;
   }
 }
 
@@ -102,20 +103,6 @@ class SymmetricMatrix extends SquareMatrix {
       }
     }
   }
-
-  indexesMax() {
-    let max = 0;
-    let indexes;
-    for (let i = 0; i < this.dimension; ++i) {
-      for (let j = 0; j < this.dimension && j > i; ++j) {
-        if (Math.abs(this.elements[i][j]) > max) {
-          max = this.elements[i][j];
-          indexes = [i, j];
-        }
-      }
-    }
-    return indexes;
-  }
 }
 
-module.exports = { Matrix, SymmetricMatrix };
+module.exports = { Matrix, SquareMatrix, SymmetricMatrix };

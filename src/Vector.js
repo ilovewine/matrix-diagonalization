@@ -8,16 +8,6 @@ class Vector {
     this.dimension = this.elements.length;
   }
 
-  // add(vector) {
-  //   if (this.dimension === vector.dimension) {
-  //     const result = [];
-  //     for (let i = 0; i < this.dimension; ++i) {
-  //       result.push(this.elements[i] + vector.elements[i]);
-  //     }
-  //     return new Vector(result);
-  //   } else throw new Error(ERROR.DIFF_LENGTH);
-  // }
-
   dot(vector) {
     if (this.dimension === vector.dimension) {
       let result = 0;
