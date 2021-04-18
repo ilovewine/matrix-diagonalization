@@ -73,21 +73,6 @@ class SquareMatrix extends Matrix {
   testSquareDimensions () {
     if (this.dimensions[0] !== this.dimensions[1]) throw new Error(ERROR.NOT_SQUARE);
   }
-
-  indexesMax () {
-    let max = 0;
-    let indexes = null;
-    for (let i = 0; i < this.dimension; ++i) {
-      for (let j = i + 1; j < this.dimension; ++j) {
-        if (Math.abs(this.elements[i][j]) > max) {
-          max = Math.abs(this.elements[i][j]);
-          indexes = [i, j];
-        }
-      }
-    }
-
-    return indexes;
-  }
 }
 
 class SymmetricMatrix extends SquareMatrix {
