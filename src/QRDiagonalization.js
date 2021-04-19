@@ -1,10 +1,14 @@
-const { SquareMatrix } = require('./Matrix');
+const { SquareMatrix, IdentityMatrix } = require('./Matrix');
 const Vector = require('./Vector');
+const printSolution = require('./printSolution');
 
 class QRDiagonalization {
-  constructor(matrix, epsilon = 0.00001) {
+  constructor(matrix, epsilon = 0.000001) {
     this.matrix = new SquareMatrix(matrix);
     this.dimension = this.matrix.dimension;
+    this.epsilon = epsilon;
+    this.eigenvalues = [];
+    this.eigenvectors = [];
   }
 
   proj(u, a) {
@@ -37,7 +41,30 @@ class QRDiagonalization {
     return { Q, R };
   }
 
-  solve() {}
+  solve() {
+    let eigenvectors = new IdentityMatrix(this.dimension);
+    do {
+      let { Q, R } = this.decomposition();
+      this.matrix = R.multiply(Q);
+      eigenvectors = eigenvectors.multiply(Q);
+    } while (this.testEpsilon());
+
+    for (let i = 0; i < this.dimension; ++i) {
+      this.eigenvectors.push(eigenvectors.column(i));
+      this.eigenvalues.push(this.matrix.elements[i][i]);
+    }
+
+    printSolution(this.eigenvalues, this.eigenvectors);
+  }
+
+  testEpsilon() {
+    for (let i = 0; i < this.dimension; ++i) {
+      for (let j = 0; j < i; ++j) {
+        if (Math.abs(this.matrix.elements[i][j]) > this.epsilon) return true;
+      }
+    }
+    return false;
+  }
 }
 
 const B = [
@@ -46,4 +73,4 @@ const B = [
   [-4, 24, -41],
 ];
 const qr = new QRDiagonalization(B);
-console.log(qr.decomposition());
+qr.solve();

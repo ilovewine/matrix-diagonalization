@@ -37,7 +37,7 @@ class Vector {
   }
 
   normalized() {
-    return this.multiply(this.norm);
+    return this.multiply(1 / this.norm);
   }
 }
 

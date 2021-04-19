@@ -1,21 +1,22 @@
 const { SquareMatrix, IdentityMatrix } = require('./Matrix');
 const { inv } = require('mathjs');
+const printSolution = require('./printSolution')
 
 class JacobiDiagonalization {
   eigenvalues = [];
   eigenvectors = [];
 
-  constructor(matrix, strategy = 'max', epsilon = 0.00001) {
-    this.result = new SquareMatrix(matrix);
+  constructor(matrix, strategy = 'max', epsilon = 0.000001) {
+    this.matrix = new SquareMatrix(matrix);
     this.epsilon = epsilon;
-    this.dimension = this.result.dimension;
+    this.dimension = this.matrix.dimension;
     this.strategy = strategy;
   }
 
   rotate(p, q) {
     let Omega;
-    if (this.result.elements[p][p] === this.result.elements[q][q]) Omega = Math.PI / 4;
-    else Omega = Math.atan((2 * this.result.elements[p][q]) / (this.result.elements[p][p] - this.result.elements[q][q])) / 2;
+    if (this.matrix.elements[p][p] === this.matrix.elements[q][q]) Omega = Math.PI / 4;
+    else Omega = Math.atan((2 * this.matrix.elements[p][q]) / (this.matrix.elements[p][p] - this.matrix.elements[q][q])) / 2;
     const rotationMatrix = SquareMatrix.zeros(this.dimension);
     for (let i = 0; i < this.dimension; ++i) {
       for (let j = 0; j < this.dimension; ++j) {
@@ -34,8 +35,8 @@ class JacobiDiagonalization {
     let indexes = null;
     for (let i = 0; i < this.dimension; ++i) {
       for (let j = i + 1; j < this.dimension; ++j) {
-        if (Math.abs(this.result.elements[i][j]) > max) {
-          max = Math.abs(this.result.elements[i][j]);
+        if (Math.abs(this.matrix.elements[i][j]) > max) {
+          max = Math.abs(this.matrix.elements[i][j]);
           indexes = [i, j];
         }
       }
@@ -46,7 +47,7 @@ class JacobiDiagonalization {
   indexesCyclic() {
     for (let i = 0; i < this.dimension; ++i) {
       for (let j = i + 1; j < this.dimension; ++j) {
-        if (Math.abs(this.result[i][j]) > this.epsilon) {
+        if (Math.abs(this.matrix[i][j]) > this.epsilon) {
           return [i, j];
         }
       }
@@ -60,13 +61,13 @@ class JacobiDiagonalization {
     do {
       rotation = this.rotate(...indexes());
       eigenvectorMatrix = new SquareMatrix(rotation.transpose().multiply(eigenvectorMatrix).elements);
-      this.result = new SquareMatrix(rotation.transpose().multiply(this.result).multiply(rotation).elements);
+      this.matrix = new SquareMatrix(rotation.transpose().multiply(this.matrix).multiply(rotation).elements);
     } while (this.testEpsilon());
     this.eigenvectors = inv(eigenvectorMatrix.elements);
     for (let i = 0; i < this.dimension; ++i) {
-      this.eigenvalues.push(this.result.elements[i][i]);
+      this.eigenvalues.push(this.matrix.elements[i][i]);
     }
-    this.printSolution();
+    printSolution(this.eigenvalues, this.eigenvectors);
   }
 
   chooseStrategy() {
@@ -85,18 +86,10 @@ class JacobiDiagonalization {
   testEpsilon() {
     for (let i = 0; i < this.dimension; ++i) {
       for (let j = i + 1; j < this.dimension; ++j) {
-        if (Math.abs(this.result.elements[i][j]) > this.epsilon) return true;
+        if (Math.abs(this.matrix.elements[i][j]) > this.epsilon) return true;
       }
     }
     return false;
-  }
-
-  printSolution() {
-    console.group('EIGENVALUES', [this.eigenvalues]);
-    console.groupEnd();
-
-    console.group('EIGENVECTORS', [...this.eigenvectors]);
-    console.groupEnd();
   }
 }
 
