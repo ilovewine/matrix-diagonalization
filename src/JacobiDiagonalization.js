@@ -1,11 +1,11 @@
 const { SquareMatrix, IdentityMatrix } = require('./Matrix');
-const math = require('mathjs');
+const { inv } = require('mathjs');
 
 class JacobiDiagonalization {
   eigenvalues = [];
   eigenvectors = [];
 
-  constructor(matrix, strategy = 'max', epsilon = 0.0001) {
+  constructor(matrix, strategy = 'max', epsilon = 0.00001) {
     this.result = new SquareMatrix(matrix);
     this.epsilon = epsilon;
     this.dimension = this.result.dimension;
@@ -16,17 +16,17 @@ class JacobiDiagonalization {
     let Omega;
     if (this.result.elements[p][p] === this.result.elements[q][q]) Omega = Math.PI / 4;
     else Omega = Math.atan((2 * this.result.elements[p][q]) / (this.result.elements[p][p] - this.result.elements[q][q])) / 2;
-    const elements = [...Array(this.dimension)].map(() => [...Array(this.dimension)].fill(0));
+    const rotationMatrix = SquareMatrix.zeros(this.dimension);
     for (let i = 0; i < this.dimension; ++i) {
       for (let j = 0; j < this.dimension; ++j) {
         if (i === j) {
-          if (i === p || i === q) elements[i][j] = Math.cos(Omega);
-          else elements[i][j] = 1;
-        } else if (i === p && j === q) elements[i][j] = -Math.sin(Omega);
-        else if (i === q && j === p) elements[i][j] = Math.sin(Omega);
+          if (i === p || i === q) rotationMatrix.elements[i][j] = Math.cos(Omega);
+          else rotationMatrix.elements[i][j] = 1;
+        } else if (i === p && j === q) rotationMatrix.elements[i][j] = -Math.sin(Omega);
+        else if (i === q && j === p) rotationMatrix.elements[i][j] = Math.sin(Omega);
       }
     }
-    return new SquareMatrix(elements);
+    return rotationMatrix;
   }
 
   indexesMax() {
@@ -62,7 +62,7 @@ class JacobiDiagonalization {
       eigenvectorMatrix = new SquareMatrix(rotation.transpose().multiply(eigenvectorMatrix).elements);
       this.result = new SquareMatrix(rotation.transpose().multiply(this.result).multiply(rotation).elements);
     } while (this.testEpsilon());
-    this.eigenvectors = math.inv(eigenvectorMatrix.elements);
+    this.eigenvectors = inv(eigenvectorMatrix.elements);
     for (let i = 0; i < this.dimension; ++i) {
       this.eigenvalues.push(this.result.elements[i][i]);
     }
@@ -97,7 +97,6 @@ class JacobiDiagonalization {
 
     console.group('EIGENVECTORS', [...this.eigenvectors]);
     console.groupEnd();
-
   }
 }
 
@@ -111,5 +110,5 @@ const A = [
   [0, 0, 0, 0, 0, -1, 2, -1],
   [0, 0, 0, 0, 0, 0, -1, 2],
 ];
-const jacobi = new JacobiDiagonalization(A, 'max', 0.00001);
+const jacobi = new JacobiDiagonalization(A, 'max');
 jacobi.solve();
