@@ -1,11 +1,7 @@
 const { SquareMatrix, IdentityMatrix } = require('./Matrix');
-const { inv } = require('mathjs');
-const printSolution = require('./printSolution');
+const utils = require('./utils');
 
 class JacobiDiagonalization {
-  eigenvalues = [];
-  eigenvectors = [];
-
   constructor(matrix, strategy = 'max', epsilon = 0.000001) {
     this.matrix = new SquareMatrix(matrix);
     this.epsilon = epsilon;
@@ -63,11 +59,8 @@ class JacobiDiagonalization {
       eigenvectorMatrix = new SquareMatrix(rotation.transpose().multiply(eigenvectorMatrix).elements);
       this.matrix = new SquareMatrix(rotation.transpose().multiply(this.matrix).multiply(rotation).elements);
     } while (this.testEpsilon());
-    this.eigenvectors = inv(eigenvectorMatrix.elements);
-    for (let i = 0; i < this.dimension; ++i) {
-      this.eigenvalues.push(this.matrix.elements[i][i]);
-    }
-    printSolution(this.eigenvalues, this.eigenvectors);
+    const eigenpairs = utils.determineEigenpairs(eigenvectorMatrix, this.matrix, this.dimension);
+    utils.printSolution(eigenpairs);
   }
 
   chooseStrategy() {
