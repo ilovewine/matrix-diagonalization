@@ -64,30 +64,25 @@ class Matrix {
 }
 
 class SquareMatrix extends Matrix {
-  constructor (elements) {
+  constructor(elements) {
     super(elements);
     this.testSquareDimensions();
     this.dimension = this.dimensions[0];
   }
 
-  testSquareDimensions () {
+  testSquareDimensions() {
     if (this.dimensions[0] !== this.dimensions[1]) throw new Error(ERROR.NOT_SQUARE);
   }
 }
 
-class SymmetricMatrix extends SquareMatrix {
-  constructor(elements) {
-    super(elements);
-    this.testSymmetry();
-  }
-
-  testSymmetry() {
-    for (let i = 0; i < this.dimension; ++i) {
-      for (let j = 0; j < this.dimension; ++j) {
-        if (this.elements[i][j] !== this.elements[j][i]) throw new Error(ERROR.ASYMMETRIC);
-      }
+class IdentityMatrix extends SquareMatrix {
+  constructor(dimension) {
+    const elements = [...Array(dimension)].map(() => [...Array(dimension)].fill(0));
+    for (let i = 0; i < dimension; ++i) {
+      elements[i][i] = 1;
     }
+    super(elements);
   }
 }
 
-module.exports = { Matrix, SquareMatrix, SymmetricMatrix };
+module.exports = { Matrix, SquareMatrix, IdentityMatrix };
