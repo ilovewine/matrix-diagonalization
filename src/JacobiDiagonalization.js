@@ -1,6 +1,6 @@
 const { SquareMatrix, IdentityMatrix } = require('./Matrix');
 const { inv } = require('mathjs');
-const printSolution = require('./printSolution')
+const printSolution = require('./printSolution');
 
 class JacobiDiagonalization {
   eigenvalues = [];
@@ -93,15 +93,4 @@ class JacobiDiagonalization {
   }
 }
 
-const A = [
-  [2, -1, 0, 0, 0, 0, 0, 0],
-  [-1, 2, -1, 0, 0, 0, 0, 0],
-  [0, -1, 2, -1, 0, 0, 0, 0],
-  [0, 0, -1, 2, -1, 0, 0, 0],
-  [0, 0, 0, -1, 2, -1, 0, 0],
-  [0, 0, 0, 0, -1, 2, -1, 0],
-  [0, 0, 0, 0, 0, -1, 2, -1],
-  [0, 0, 0, 0, 0, 0, -1, 2],
-];
-const jacobi = new JacobiDiagonalization(A, 'max');
-jacobi.solve();
+module.exports = JacobiDiagonalization;

@@ -67,10 +67,4 @@ class QRDiagonalization {
   }
 }
 
-const B = [
-  [12, -51, 4],
-  [6, 167, -68],
-  [-4, 24, -41],
-];
-const qr = new QRDiagonalization(B);
-qr.solve();
+module.exports = QRDiagonalization;
